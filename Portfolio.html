@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  
+  <!-- Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ---------- CSS Variables for Dark Theme ---------- */
+    :root {
+      --accent: #00ff88; /* Blue 500 */
+      --accent-deep: #00cc66; /* Blue 900 */
+      --bg-dark: #050505; /* Slate 950 */
+      --bg-card: #101010; /* Slate 900 */
+      --bg-lighter: #181818; /* Slate 800 */
+      --text-main: #f8fafc; /* Slate 50 */
+      --text-muted: #94a3b8; /* Slate 400 */
+    }
+
+    * { scroll-behavior: smooth; }
+    body { overflow-x: hidden; background-color: var(--bg-dark); color: var(--text-main); }
+
+    /* ---------- Cursor glow ---------- */
+    .cursor-glow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0) 70%);
+      transform: translate(-50%, -50%);
+      transition: left 0.12s ease-out, top 0.12s ease-out;
+    }
+
+    /* ---------- Scroll progress bar ---------- */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #00ff88, #06b6d4, #00ff88);
+      background-size: 200% 100%;
+      z-index: 100;
+      animation: gradientShift 3s linear infinite;
+      transition: width 0.1s ease-out;
+    }
+
+    /* ---------- Keyframes ---------- */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    @keyframes slideInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-16px); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 18px rgba(59,130,246,0.35); }
+      50% { box-shadow: 0 0 36px rgba(59,130,246,0.7); }
+    }
+    @keyframes letterPop {
+      0% { opacity: 0; transform: translateY(14px) rotate(-6deg); }
+      60% { opacity: 1; transform: translateY(-3px) rotate(2deg); }
+      100% { opacity: 1; transform: translateY(0) rotate(0); }
+    }
+    @keyframes letterWave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes underlineGrow {
+      from { width: 0; } to { width: 100%; }
+    }
+    @keyframes blobMove {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-20px) scale(1.1); }
+      66% { transform: translate(-20px,20px) scale(0.95); }
+    }
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.4); }
+      60% { opacity: 1; transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    /* ---------- Nav ---------- */
+    .nav-animated { animation: slideInDown 0.6s ease-out; transition: all 0.3s ease; }
+    .nav-scrolled {
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
+      background-color: rgba(2, 6, 23, 0.85); /* Dark transparent */
+    }
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #06b6d4);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ---------- Unique animated name effect ---------- */
+    .name-wrap {
+      display: inline-block;
+      cursor: default;
+      perspective: 400px;
+    }
+    .name-letter{
+display:inline-block;
+color:#00ff88;
+text-shadow:0 0 5px #00ff88,0 0 15px #00ff88,0 0 30px #00ff88;
+animation:letterPop .6s ease both;
+transition:.3s;
+}
+    .name-wrap:hover .name-letter{
+display:inline-block;
+color:#00ff88;
+text-shadow:0 0 5px #00ff88,0 0 15px #00ff88,0 0 30px #00ff88;
+animation:letterPop .6s ease both;
+transition:.3s;
+}
+    .name-letter:hover {
+      transform: scale(1.3) translateY(-4px);
+      text-shadow: 0 6px 18px rgba(59,130,246,0.6);
+    }
+
+    /* ---------- Hero ---------- */
+    .hero-eyebrow { animation: slideInUp 0.8s ease-out; }
+    .hero-title { animation: slideInUp 0.8s ease-out 0.15s both; }
+    .hero-subtitle { animation: slideInUp 0.8s ease-out 0.3s both; }
+    .hero-buttons { animation: slideInUp 0.8s ease-out 0.45s both; }
+
+    .hero-button {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hero-button:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(59,130,246,0.25); }
+    .hero-button::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+    .hero-button:hover::before { left: 125%; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #7dffb3, #00ff88, #00cc66);
+      background-size: 300% 300%;
+      animation: gradientShift 4s ease infinite;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(60px);
+      opacity: 0.15;
+      animation: blobMove 10s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .scroll-indicator { animation: float 2s ease-in-out infinite; }
+
+    /* ---------- Scroll reveal ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- Cards ---------- */
+    .card-hover {
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-8px) scale(1.015);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+      border-color: var(--accent);
+    }
+
+    .project-icon { animation: float 3s ease-in-out infinite; font-size: 3rem; }
+
+    .skill-item {
+      transition: transform 0.25s ease, color 0.25s ease;
+    }
+    .skill-item:hover { transform: translateX(10px); color: #7dffb3; }
+
+    .tech-badge { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .tech-badge:hover { transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+
+    .section-header { position: relative; display: inline-block; }
+    .section-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      animation: underlineGrow 0.8s ease-out both;
+    }
+
+    .line-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2.5s infinite linear;
+    }
+
+    .contact-button { transition: transform 0.3s ease, box-shadow 0.3s ease; animation: bounceIn 0.7s ease-out both; }
+    .contact-button:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(59,130,246,0.25); }
+
+    .pulse-dot { animation: pulseGlow 2.2s ease-in-out infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-black text-slate-100 relative">
+
+  <!-- Cursor glow -->
+  <div class="cursor-glow" id="cursor-glow"></div>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scroll-progress" style="width: 0%"></div>
+
+  <!-- Navigation -->
+  <nav id="navbar" class="fixed top-0 w-full z-50 nav-animated bg-black border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold name-wrap" id="animated-name">
+        Krish Tarpara
+      </h1>
+
+      <div class="hidden md:block relative" id="desktop-menu-wrap">
+        <button id="desktop-menu-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-green-400 border border-slate-700 hover:border-green-400 rounded-lg transition">
+          Menu
+          <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="desktop-menu-chevron"></i>
+        </button>
+        <div id="desktop-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-[#0a0a0a] border-2 border-green-500/40 rounded-lg shadow-2xl shadow-black/80 py-2" style="display:none; z-index:9999;">
+          <button onclick="scrollToSection('about')" class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-200 hover:text-green-400 hover:bg-slate-800 transition">About</button>
+          <button onclick="scrollToSection('projects')" class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-200 hover:text-green-400 hover:bg-slate-800 transition">Projects</button>
+          <button onclick="scrollToSection('skills')" class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-200 hover:text-green-400 hover:bg-slate-800 transition">Skills</button>
+          <button onclick="scrollToSection('certifications')" class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-200 hover:text-green-400 hover:bg-slate-800 transition">Certifications</button>
+          <button onclick="scrollToSection('contact')" class="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-200 hover:text-green-400 hover:bg-slate-800 transition">Contact</button>
+        </div>
+      </div>
+
+      <button class="md:hidden text-slate-300 hover:text-white" id="menu-btn">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800 p-4 flex-col gap-4">
+      <button onclick="scrollToSection('about')" class="text-left font-medium text-slate-300 hover:text-green-400">About</button>
+      <button onclick="scrollToSection('projects')" class="text-left font-medium text-slate-300 hover:text-green-400">Projects</button>
+      <button onclick="scrollToSection('skills')" class="text-left font-medium text-slate-300 hover:text-green-400">Skills</button>
+      <button onclick="scrollToSection('certifications')" class="text-left font-medium text-slate-300 hover:text-green-400">Certifications</button>
+      <button onclick="scrollToSection('contact')" class="text-left font-medium text-slate-300 hover:text-green-400">Contact</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-24 px-4 sm:px-6 bg-black overflow-hidden">
+    <div class="blob w-96 h-96 bg-green-500 -top-20 -left-20"></div>
+    <div class="blob w-80 h-80 bg-cyan-600 top-40 right-0" style="animation-delay: 2s"></div>
+
+    <div class="max-w-4xl mx-auto relative z-10">
+      <div class="mb-6 text-green-400 font-semibold text-sm tracking-wide hero-eyebrow flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-blue-500 inline-block pulse-dot"></span>
+        WELCOME TO MY PORTFOLIO
+      </div>
+      <h2 class="text-5xl sm:text-6xl font-bold mb-6 leading-tight hero-title text-white">
+        Full Stack Developer &
+        <br />
+        <span class="gradient-text">AI/ML Enthusiast</span>
+      </h2>
+      <p class="text-lg text-slate-400 mb-8 max-w-2xl leading-relaxed hero-subtitle">
+        I'm a Computer Engineering student at LJ University with expertise in building full-stack web applications and exploring machine learning. Passionate about creating innovative solutions and learning new technologies.
+      </p>
+      <div class="flex gap-4 flex-wrap hero-buttons">
+        <button onclick="scrollToSection('projects')" class="hero-button px-8 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-400 transition shadow-lg shadow-blue-900/20">
+          View My Work
+        </button>
+        <button onclick="scrollToSection('contact')" class="hero-button px-8 py-3 border-2 border-slate-700 text-slate-300 font-semibold rounded-lg hover:border-green-400 hover:text-green-400 transition bg-slate-900/50 backdrop-blur-sm">
+          Get In Touch
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll-indicator absolute bottom-6 left-1/2 -translate-x-1/2 text-slate-500 text-sm">
+      ↓ scroll
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" data-section class="py-20 px-4 sm:px-6 bg-slate-900">
+    <div class="max-w-4xl mx-auto">
+      <h3 class="text-3xl font-bold mb-4 section-header text-white">About Me</h3>
+      <div class="line-divider mb-12 mt-6 max-w-xs"></div>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <p class="text-lg text-slate-400 mb-4 leading-relaxed">
+            I'm a Computer Engineering student at LJ University, Ahmedabad, currently in my early years of engineering (2024-2028). I'm passionate about building full-stack web applications and exploring the fascinating world of machine learning and deep learning.
+          </p>
+          <p class="text-lg text-slate-400 mb-4 leading-relaxed">
+            Through projects like FindMyRoof and my placement management system, I've developed strong fundamentals in both frontend and backend development. I'm committed to continuous learning and leveraging technology to solve real-world problems.
+          </p>
+        </div>
+        <div class="bg-slate-800 rounded-lg p-8 card-hover border border-slate-700">
+          <h4 class="font-semibold text-lg mb-6 text-white">Quick Facts</h4>
+          <ul class="space-y-4">
+            <li class="flex items-start skill-item">
+              <span class="text-green-400 mr-4">→</span>
+              <span class="text-slate-300"><strong class="text-slate-100">Location:</strong> Ahmedabad, Gujarat</span>
+            </li>
+            <li class="flex items-start skill-item">
+              <span class="text-green-400 mr-4">→</span>
+              <span class="text-slate-300"><strong class="text-slate-100">Education:</strong> B.E. in Computer Engineering</span>
+            </li>
+            <li class="flex items-start skill-item">
+              <span class="text-green-400 mr-4">→</span>
+              <span class="text-slate-300"><strong class="text-slate-100">Focus:</strong> Full-stack & ML/AI</span>
+            </li>
+            <li class="flex items-start skill-item">
+              <span class="text-green-400 mr-4">→</span>
+              <span class="text-slate-300"><strong class="text-slate-100">Contact:</strong> tarparakrish0903@gmail.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" data-section class="py-20 px-4 sm:px-6 bg-black">
+    <div class="max-w-4xl mx-auto">
+      <h3 class="text-3xl font-bold mb-4 section-header text-white">Featured Projects</h3>
+      <div class="line-divider mb-12 mt-6 max-w-xs"></div>
+
+      <div class="space-y-12">
+        <!-- Project 1 -->
+        <div class="bg-slate-900 rounded-lg overflow-hidden card-hover border border-slate-800">
+          <div class="grid md:grid-cols-2">
+            <div class="bg-gradient-to-br from-blue-900 to-blue-950 p-12 flex items-center justify-center relative overflow-hidden border-r border-slate-800">
+              <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl"></div>
+              <div class="text-white text-center relative z-10">
+                <div class="project-icon">🏠</div>
+                <p class="font-semibold mt-4 text-blue-200">FindMyRoof</p>
+              </div>
+            </div>
+            <div class="p-8">
+              <h4 class="text-2xl font-bold mb-3 text-white">FindMyRoof</h4>
+              <p class="text-slate-400 mb-4 mt-4">
+                A full-stack property listing platform that helps users find their ideal homes. Built with Flask backend and responsive frontend, featuring advanced search and filtering capabilities for properties based on type, price, and location.
+              </p>
+              <div class="mb-6">
+                <p class="text-sm font-semibold text-slate-300 mb-3">Tech Stack:</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 bg-green-900/40 text-green-300 border border-green-700 rounded-full text-sm tech-badge">Python</span>
+                  <span class="px-3 py-1 bg-yellow-900/50 text-yellow-300 border border-yellow-800 rounded-full text-sm tech-badge">Flask</span>
+                  <span class="px-3 py-1 bg-orange-900/50 text-orange-300 border border-orange-800 rounded-full text-sm tech-badge">JavaScript</span>
+                  <span class="px-3 py-1 bg-purple-900/50 text-purple-300 border border-purple-800 rounded-full text-sm tech-badge">Bootstrap</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="bg-slate-900 rounded-lg overflow-hidden card-hover border border-slate-800">
+          <div class="grid md:grid-cols-2">
+            <div class="bg-gradient-to-br from-emerald-900 to-emerald-950 p-12 flex items-center justify-center order-2 md:order-1 relative overflow-hidden border-r border-slate-800">
+              <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-xl"></div>
+              <div class="text-white text-center relative z-10">
+                <div class="project-icon">📋</div>
+                <p class="font-semibold mt-4 text-emerald-200">Placement Management</p>
+              </div>
+            </div>
+            <div class="p-8 order-1 md:order-2">
+              <h4 class="text-2xl font-bold mb-3 text-white">Internship & Placement Management System</h4>
+              <p class="text-slate-400 mb-4 mt-4">
+                A comprehensive console-based placement management system designed for educational institutions. Features include student registration, company job postings, interview scheduling, and efficient database management for tracking placements.
+              </p>
+              <div class="mb-6">
+                <p class="text-sm font-semibold text-slate-300 mb-3">Tech Stack:</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 bg-red-900/50 text-red-300 border border-red-800 rounded-full text-sm tech-badge">Java</span>
+                  <span class="px-3 py-1 bg-green-900/50 text-green-300 border border-green-800 rounded-full text-sm tech-badge">MySQL</span>
+                  <span class="px-3 py-1 bg-slate-800 text-slate-300 border border-slate-700 rounded-full text-sm tech-badge">JDBC</span>
+                  <span class="px-3 py-1 bg-indigo-900/50 text-indigo-300 border border-indigo-800 rounded-full text-sm tech-badge">Database Design</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" data-section class="py-20 px-4 sm:px-6 bg-slate-900">
+    <div class="max-w-4xl mx-auto">
+      <h3 class="text-3xl font-bold mb-4 section-header text-white">Skills & Technologies</h3>
+      <div class="line-divider mb-12 mt-6 max-w-xs"></div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-black p-6 rounded-xl border border-slate-800">
+          <h4 class="font-semibold text-lg mb-4 gradient-text">Languages</h4>
+          <ul class="space-y-2 text-slate-400">
+            <li class="skill-item">✓ Java</li>
+            <li class="skill-item">✓ Python</li>
+            <li class="skill-item">✓ JavaScript</li>
+            <li class="skill-item">✓ HTML & CSS</li>
+            <li class="skill-item">✓ SQL (PostgreSQL, MySQL)</li>
+          </ul>
+        </div>
+        <div class="bg-black p-6 rounded-xl border border-slate-800">
+          <h4 class="font-semibold text-lg mb-4 gradient-text">Frameworks & Tools</h4>
+          <ul class="space-y-2 text-slate-400">
+            <li class="skill-item">✓ Flask & Django</li>
+            <li class="skill-item">✓ Bootstrap & Tailwind</li>
+            <li class="skill-item">✓ MERN Stack</li>
+            <li class="skill-item">✓ Git & VS Code</li>
+            <li class="skill-item">✓ IntelliJ IDE</li>
+          </ul>
+        </div>
+        <div class="bg-black p-6 rounded-xl border border-slate-800">
+          <h4 class="font-semibold text-lg mb-4 gradient-text">Specializations</h4>
+          <ul class="space-y-2 text-slate-400">
+            <li class="skill-item">✓ Machine Learning</li>
+            <li class="skill-item">✓ Deep Learning</li>
+            <li class="skill-item">✓ Data Preprocessing</li>
+            <li class="skill-item">✓ Pandas & NumPy</li>
+            <li class="skill-item">✓ Database Design</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certifications Section -->
+  <section id="certifications" data-section class="py-20 px-4 sm:px-6 bg-black">
+    <div class="max-w-4xl mx-auto">
+      <h3 class="text-3xl font-bold mb-4 section-header text-white">Certifications</h3>
+      <div class="line-divider mb-12 mt-6 max-w-xs"></div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Cert 1 -->
+        <div class="bg-slate-900 rounded-lg p-6 card-hover border border-slate-800 flex gap-4 items-start">
+          <i data-lucide="award" class="w-8 h-8 text-green-400 shrink-0 mt-1"></i>
+          <div>
+            <h4 class="font-semibold text-lg text-white mb-1">Introduction to HTML, CSS, & JavaScript</h4>
+            <p class="text-slate-400 text-sm mb-2">IBM · Coursera — Dec 2025</p>
+            <a href="https://coursera.org/verify/RO9AWIY803UG" target="_blank" rel="noopener noreferrer" class="text-green-400 text-sm font-semibold hover:text-green-300 transition">Verify Credential →</a>
+          </div>
+        </div>
+
+        <!-- Cert 2 -->
+        <div class="bg-slate-900 rounded-lg p-6 card-hover border border-slate-800 flex gap-4 items-start">
+          <i data-lucide="award" class="w-8 h-8 text-green-400 shrink-0 mt-1"></i>
+          <div>
+            <h4 class="font-semibold text-lg text-white mb-1">Inheritance and Data Structures in Java</h4>
+            <p class="text-slate-400 text-sm mb-2">University of Pennsylvania · Coursera — Jul 2025</p>
+            <a href="https://coursera.org/verify/M45E1D8QQOH7" target="_blank" rel="noopener noreferrer" class="text-green-400 text-sm font-semibold hover:text-green-300 transition">Verify Credential →</a>
+          </div>
+        </div>
+
+        <!-- Cert 3 -->
+        <div class="bg-slate-900 rounded-lg p-6 card-hover border border-slate-800 flex gap-4 items-start">
+          <i data-lucide="award" class="w-8 h-8 text-green-400 shrink-0 mt-1"></i>
+          <div>
+            <h4 class="font-semibold text-lg text-white mb-1">Introduction to Java</h4>
+            <p class="text-slate-400 text-sm mb-2">LearnQuest · Coursera — Dec 2024</p>
+            <a href="https://coursera.org/verify/YOTW7Q0L0I68" target="_blank" rel="noopener noreferrer" class="text-green-400 text-sm font-semibold hover:text-green-300 transition">Verify Credential →</a>
+          </div>
+        </div>
+
+        <!-- Cert 4 -->
+        <div class="bg-slate-900 rounded-lg p-6 card-hover border border-slate-800 flex gap-4 items-start">
+          <i data-lucide="award" class="w-8 h-8 text-green-400 shrink-0 mt-1"></i>
+          <div>
+            <h4 class="font-semibold text-lg text-white mb-1">Exploratory Data Analysis for Machine Learning</h4>
+            <p class="text-slate-400 text-sm mb-2">IBM · Coursera — May 2026</p>
+            <a href="https://coursera.org/verify/ECAFZZ1LEGLZ" target="_blank" rel="noopener noreferrer" class="text-green-400 text-sm font-semibold hover:text-green-300 transition">Verify Credential →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" data-section class="py-20 px-4 sm:px-6 bg-black text-white relative overflow-hidden">
+    <div class="blob w-72 h-72 bg-blue-900 top-10 left-10"></div>
+    <div class="blob w-72 h-72 bg-purple-900 top-40 right-10" style="animation-delay: 3s"></div>
+
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <h3 class="text-3xl font-bold mb-4 section-header">Let's Connect</h3>
+      <p class="text-slate-400 mb-12 max-w-2xl mx-auto text-lg mt-6">
+        I'm always interested in learning opportunities, collaborations, and new projects. Feel free to reach out through any of these channels!
+      </p>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-6 mb-12">
+        <a href="mailto:tarparakrish0903@gmail.com" class="flex items-center justify-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-400 rounded-lg font-semibold transition contact-button shadow-lg shadow-blue-900/20">
+          <i data-lucide="mail" class="w-5 h-5"></i> tarparakrish0903@gmail.com
+        </a>
+        <a href="tel:7201036881" class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-slate-700 text-slate-300 hover:bg-slate-800 hover:border-green-400 hover:text-green-400 rounded-lg font-semibold transition contact-button bg-slate-900/50 backdrop-blur-sm">
+          📞 7201036881
+        </a>
+      </div>
+
+      <div class="flex justify-center gap-6 mb-12 flex-wrap">
+        <a href="https://www.linkedin.com/in/krish-tarpara/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-6 py-3 border-2 border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg font-semibold transition contact-button bg-slate-900/50">
+          <i data-lucide="linkedin" class="w-5 h-5"></i> LinkedIn
+        </a>
+        <a href="https://github.com/tarparakrish" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-6 py-3 border-2 border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg font-semibold transition contact-button bg-slate-900/50">
+          <i data-lucide="github" class="w-5 h-5"></i> GitHub
+        </a>
+      </div>
+
+      <p class="text-slate-600 text-sm">© 2024 Krish Tarpara. All rights reserved.</p>
+    </div>
+  </section>
+
+  <!-- Vanilla JavaScript Logic -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Scroll Logic
+    const progressBar = document.getElementById('scroll-progress');
+    const navbar = document.getElementById('navbar');
+    
+    window.addEventListener('scroll', () => {
+      // Progress Bar
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+      progressBar.style.width = progress + '%';
+
+      // Navbar Styling
+      if (window.scrollY > 50) {
+        navbar.classList.add('nav-scrolled');
+        navbar.classList.remove('bg-black', 'border-b', 'border-slate-800');
+      } else {
+        navbar.classList.remove('nav-scrolled');
+        navbar.classList.add('bg-black', 'border-b', 'border-slate-800');
+      }
+    });
+
+    // Intersection Observer for Scroll Reveals
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('[data-section]').forEach((el) => {
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+
+    // Cursor Glow Tracking
+    const cursor = document.getElementById('cursor-glow');
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+
+    // Mobile Menu Toggle
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let isMenuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      isMenuOpen = !isMenuOpen;
+      if (isMenuOpen) {
+        mobileMenu.classList.remove('hidden');
+        mobileMenu.classList.add('flex');
+        menuBtn.innerHTML = '<i data-lucide="x"></i>';
+      } else {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('flex');
+        menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+      }
+      lucide.createIcons();
+    });
+
+    // Desktop Menu Dropdown Toggle
+    const desktopMenuBtn = document.getElementById('desktop-menu-btn');
+    const desktopMenuDropdown = document.getElementById('desktop-menu-dropdown');
+    const desktopMenuChevron = document.getElementById('desktop-menu-chevron');
+    let isDesktopMenuOpen = false;
+
+    function closeDesktopMenu() {
+      isDesktopMenuOpen = false;
+      desktopMenuDropdown.style.display = 'none';
+      desktopMenuChevron.style.transform = 'rotate(0deg)';
+    }
+
+    desktopMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isDesktopMenuOpen = !isDesktopMenuOpen;
+      desktopMenuDropdown.style.display = isDesktopMenuOpen ? 'block' : 'none';
+      desktopMenuChevron.style.transform = isDesktopMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (isDesktopMenuOpen && !document.getElementById('desktop-menu-wrap').contains(e.target)) {
+        closeDesktopMenu();
+      }
+    });
+
+    // Smooth scroll helper used by nav buttons
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      closeDesktopMenu();
+      if (isMenuOpen) {
+        isMenuOpen = false;
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('flex');
+        menuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>
